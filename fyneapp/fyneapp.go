@@ -9,7 +9,6 @@ import (
 	"fyne.io/fyne/v2/app"
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/dialog"
-	"fyne.io/fyne/v2/layout"
 	"fyne.io/fyne/v2/widget"
 
 	"github.com/Wexler763/dbGUI/dbconnect"
@@ -39,8 +38,6 @@ func getTables(db *sql.DB) ([]string, error) {
 	return tables, nil
 }
 
-// ... (previous imports)
-
 func Create() {
 	myApp := app.New()
 
@@ -51,12 +48,7 @@ func Create() {
 
 	inputEntry := widget.NewEntry()
 	inputEntry.SetPlaceHolder("Enter your query here")
-
-	// Get the window canvas size
-	windowCanvasSize := myWindow.Canvas().Size()
-
-	// Resize the Entry widget based on the window size
-	inputEntry.Resize(fyne.NewSize(windowCanvasSize.Width, windowCanvasSize.Height/3))
+	inputEntry.Resize(fyne.NewSize(800, 500))
 
 	runQueryBtn := widget.NewButton("▶️ Run Query", func() {
 		// Implement the logic to run the query
@@ -83,18 +75,24 @@ func Create() {
 		tablesDialog.Show()
 	})
 
-	// Create layout
-	layout := container.NewBorder(
-		nil, nil, nil, nil,
-		container.NewVBox(
+	myWindow.SetFullScreen(true)
+
+	nameLabel.Move(fyne.NewPos(10, 10))
+	runQueryBtn.Move(fyne.NewPos(50, 600))
+	inputEntry.Move(fyne.NewPos(10, 70))
+	showTablesBtn.Move(fyne.NewPos(1000, 100))
+
+	runQueryBtn.Resize(fyne.NewSize(100, 50))
+	showTablesBtn.Resize(fyne.NewSize(100, 50))
+
+	myWindow.SetContent(
+		container.NewWithoutLayout(
 			nameLabel,
 			inputEntry,
-			container.NewHBox(runQueryBtn, layout.NewSpacer(), showTablesBtn),
+			runQueryBtn,
+			showTablesBtn,
 		),
 	)
-
-	myWindow.SetContent(layout)
-	myWindow.SetFullScreen(true)
 
 	// Close the App when Escape key is pressed
 	myWindow.Canvas().SetOnTypedKey(func(keyEvent *fyne.KeyEvent) {
