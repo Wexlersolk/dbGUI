@@ -1,4 +1,3 @@
-// fyneapp.go
 package fyneapp
 
 import (
@@ -11,7 +10,6 @@ import (
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/dialog"
 	"fyne.io/fyne/v2/layout"
-	"fyne.io/fyne/v2/theme"
 	"fyne.io/fyne/v2/widget"
 
 	"github.com/Wexler763/dbGUI/dbconnect"
@@ -41,15 +39,31 @@ func getTables(db *sql.DB) ([]string, error) {
 	return tables, nil
 }
 
+// ... (previous imports)
+
 func Create() {
 	myApp := app.New()
 
 	myWindow := myApp.NewWindow("TheHornedDB")
 
-	text := widget.NewLabel("Hail the horned one ")
-	text.Alignment = fyne.TextAlignCenter
+	nameLabel := widget.NewLabel("TheHornedDB")
+	nameLabel.Alignment = fyne.TextAlignLeading
 
-	showTablesBtn := widget.NewButtonWithIcon("Show Tables", theme.ViewRefreshIcon(), func() {
+	inputEntry := widget.NewEntry()
+	inputEntry.SetPlaceHolder("Enter your query here")
+
+	// Get the window canvas size
+	windowCanvasSize := myWindow.Canvas().Size()
+
+	// Resize the Entry widget based on the window size
+	inputEntry.Resize(fyne.NewSize(windowCanvasSize.Width, windowCanvasSize.Height/3))
+
+	runQueryBtn := widget.NewButton("▶️ Run Query", func() {
+		// Implement the logic to run the query
+		// You can use inputEntry.Text to get the user's input
+	})
+
+	showTablesBtn := widget.NewButton("Show Tables", func() {
 		db, err := dbconnect.ConnectDB()
 		if err != nil {
 			log.Println("Failed to connect to the database:", err)
@@ -63,19 +77,24 @@ func Create() {
 		}
 
 		// Create a dialog to display the tables
-		tablesDialog := dialog.NewInformation("Database Tables", fmt.Sprintf("Tables: %v", tables), myWindow)
+		message := fmt.Sprintf("Tables: %v", tables)
+		tablesDialog := dialog.NewInformation("Database Tables", message, myWindow)
 		tablesDialog.SetDismissText("OK")
 		tablesDialog.Show()
 	})
-	showTablesBtn.Importance = widget.HighImportance
 
-	box := container.NewVBox(
-		text,
-		layout.NewSpacer(),
-		showTablesBtn,
+	// Create layout
+	layout := container.NewBorder(
+		nil, nil, nil, nil,
+		container.NewVBox(
+			nameLabel,
+			inputEntry,
+			container.NewHBox(runQueryBtn, layout.NewSpacer(), showTablesBtn),
+		),
 	)
 
-	myWindow.SetContent(box)
+	myWindow.SetContent(layout)
+	myWindow.SetFullScreen(true)
 
 	// Close the App when Escape key is pressed
 	myWindow.Canvas().SetOnTypedKey(func(keyEvent *fyne.KeyEvent) {
