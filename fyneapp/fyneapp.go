@@ -2,6 +2,7 @@
 package fyneapp
 
 import (
+	"database/sql"
 	"fmt"
 	"log"
 
@@ -12,7 +13,33 @@ import (
 	"fyne.io/fyne/v2/layout"
 	"fyne.io/fyne/v2/theme"
 	"fyne.io/fyne/v2/widget"
+
+	"github.com/Wexler763/dbGUI/dbconnect"
 )
+
+func getTables(db *sql.DB) ([]string, error) {
+	query := "SHOW TABLES"
+	rows, err := db.Query(query)
+	if err != nil {
+		return nil, err
+	}
+	defer func() {
+		if err := rows.Close(); err != nil {
+			fmt.Println("Error closing rows:", err)
+		}
+	}()
+
+	var tables []string
+	for rows.Next() {
+		var tableName string
+		if err := rows.Scan(&tableName); err != nil {
+			return nil, err
+		}
+		tables = append(tables, tableName)
+	}
+
+	return tables, nil
+}
 
 func Create() {
 	myApp := app.New()
@@ -23,7 +50,13 @@ func Create() {
 	text.Alignment = fyne.TextAlignCenter
 
 	showTablesBtn := widget.NewButtonWithIcon("Show Tables", theme.ViewRefreshIcon(), func() {
-		tables, err := getTables()
+		db, err := dbconnect.ConnectDB()
+		if err != nil {
+			log.Println("Failed to connect to the database:", err)
+			return
+		}
+
+		tables, err := getTables(db)
 		if err != nil {
 			log.Println("Error fetching tables:", err)
 			return
