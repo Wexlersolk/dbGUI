@@ -1,4 +1,5 @@
-package main
+// fyneapp.go
+package fyneapp
 
 import (
 	"fmt"
@@ -13,7 +14,7 @@ import (
 	"fyne.io/fyne/v2/widget"
 )
 
-func create() {
+func Create() {
 	myApp := app.New()
 
 	myWindow := myApp.NewWindow("TheHornedDB")

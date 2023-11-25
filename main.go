@@ -2,14 +2,17 @@
 package main
 
 import (
+	"database/sql"
 	"fmt"
+	"log"
 
 	"github.com/Wexler763/dbGUI/dbconnect"
+	"github.com/Wexler763/dbGUI/fyneapp"
 )
 
-func getTables() ([]string, error) {
+func getTables(db *sql.DB) ([]string, error) {
 	query := "SHOW TABLES"
-	rows, err := dbconnect.DB().Query(query)
+	rows, err := db.Query(query)
 	if err != nil {
 		return nil, err
 	}
@@ -32,12 +35,10 @@ func getTables() ([]string, error) {
 }
 
 func main() {
-	dbconnect.ConnectDB()
-	tables, err := getTables()
+	db, err := dbconnect.ConnectDB()
 	if err != nil {
-		fmt.Println("Error getting tables:", err)
-		return
+		log.Fatal("Failed to connect to the database:", err)
 	}
+	fyneapp.Create()
 
-	fmt.Println("Tables:", tables)
 }

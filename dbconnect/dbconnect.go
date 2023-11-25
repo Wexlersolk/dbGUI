@@ -4,7 +4,6 @@ package dbconnect
 import (
 	"database/sql"
 	"fmt"
-	"log"
 
 	_ "github.com/go-sql-driver/mysql"
 )
@@ -19,26 +18,27 @@ const (
 
 var db *sql.DB
 
-func InitDB() (*sql.DB, error) {
-	// Modify the DSN as needed
+func InitDB() error {
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", DBUsername, DBPassword, DBHost, DBPort, DBName)
 	var err error
 	db, err = sql.Open("mysql", dsn)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
 	err = db.Ping()
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	return db, nil
+	return nil
 }
 
-func ConnectDB() {
-	_, err := InitDB()
-	if err != nil {
-		log.Fatal("Failed to connect to the database:", err)
+func ConnectDB() (*sql.DB, error) {
+	if db == nil {
+		if err := InitDB(); err != nil {
+			return nil, err
+		}
 	}
+	return db, nil
 }
