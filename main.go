@@ -1,33 +1,43 @@
+// main.go
 package main
 
 import (
-	"fyne.io/fyne/v2/app"
-	"fyne.io/fyne/v2/container"
-	"fyne.io/fyne/v2/container/layout"
-	"fyne.io/fyne/v2/container/widget"
+	"fmt"
+
+	"github.com/Wexler763/dbGUI/dbconnect"
 )
 
+func getTables() ([]string, error) {
+	query := "SHOW TABLES"
+	rows, err := dbconnect.DB().Query(query)
+	if err != nil {
+		return nil, err
+	}
+	defer func() {
+		if err := rows.Close(); err != nil {
+			fmt.Println("Error closing rows:", err)
+		}
+	}()
+
+	var tables []string
+	for rows.Next() {
+		var tableName string
+		if err := rows.Scan(&tableName); err != nil {
+			return nil, err
+		}
+		tables = append(tables, tableName)
+	}
+
+	return tables, nil
+}
+
 func main() {
-	myApp := app.New()
-	myWindow := myApp.NewWindow("Simple GUI App")
+	dbconnect.ConnectDB()
+	tables, err := getTables()
+	if err != nil {
+		fmt.Println("Error getting tables:", err)
+		return
+	}
 
-	// Create a label
-	myLabel := widget.NewLabel("Hello, Golang GUI!")
-
-	// Create a button with a click handler
-	myButton := widget.NewButton("Click me", func() {
-		myLabel.SetText("Button Clicked!")
-	})
-
-	// Set up the GUI layout
-	myWindow.SetContent(container.NewVBox(
-		layout.NewSpacer(), // Spacer at the top
-		myLabel,
-		layout.NewSpacer(), // Spacer in the middle
-		myButton,
-		layout.NewSpacer(), // Spacer at the bottom
-	))
-
-	// Show and run the application
-	myWindow.ShowAndRun()
+	fmt.Println("Tables:", tables)
 }
