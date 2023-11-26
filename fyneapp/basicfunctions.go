@@ -117,7 +117,7 @@ func saveCSV(filename string, data string) error {
 	return nil
 }
 
-func executeCommandOO(db *sql.DB, command string, book *Book) (string, error) {
+func executeCommandOO(db *sql.DB, command string, book struct) (string, error) {
 	var result string
 	switch command {
 	case "create":

@@ -1,11 +1,11 @@
-package fyneapp
 
 import (
 	"database/sql"
 	"fmt"
 	"strings"
 
-	"fyne.io/fyne/widget"
+	"fyne.io/fyne/v2/widget"
+	"github.com/Wexler763/dbGUI/oo"
 )
 
 func handleRunQuery(db *sql.DB, query string, isEditingMode bool, inputEntry *widget.Entry) {
@@ -35,7 +35,7 @@ func handleEditingMode(db *sql.DB, inputEntry *widget.Entry) {
 		action := strings.TrimSpace(strings.TrimPrefix(instructionLine, prefix))
 		values := parseBookValues(lines)
 
-		book := Book{
+		book := oo.Book{
 			BookLibraryCode:   values["BookLibraryCode"],
 			Title:             values["Title"],
 			YearOfPublication: atoi(values["YearOfPublication"]),

@@ -1,4 +1,4 @@
-package main
+package oo
 
 import (
 	"database/sql"
