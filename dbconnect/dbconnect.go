@@ -1,4 +1,3 @@
-// dbconnector.go
 package dbconnect
 
 import (
