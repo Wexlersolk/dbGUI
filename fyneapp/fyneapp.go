@@ -17,6 +17,8 @@ import (
 	"github.com/Wexler763/dbGUI/dbconnect"
 )
 
+var formContainer *fyne.Container
+
 func getTables(db *sql.DB) ([]string, error) {
 	query := "SHOW TABLES"
 	rows, err := db.Query(query)
@@ -93,7 +95,18 @@ func executeQuery(db *sql.DB, query string) (string, error) {
 }
 
 func saveCSV(filename string, data string) error {
-	file, err := os.Create(filename)
+	folderPath := "results"
+
+	if _, err := os.Stat(folderPath); os.IsNotExist(err) {
+		err := os.Mkdir(folderPath, 0755)
+		if err != nil {
+			return err
+		}
+	}
+
+	filePath := folderPath + string(os.PathSeparator) + filename
+
+	file, err := os.Create(filePath)
 	if err != nil {
 		return err
 	}
@@ -116,6 +129,7 @@ func saveCSV(filename string, data string) error {
 }
 
 func Create() {
+
 	myApp := app.New()
 
 	myWindow := myApp.NewWindow("TheHornedDB")
@@ -141,7 +155,8 @@ func Create() {
 
 		result, err := executeQuery(db, query)
 		if err != nil {
-			log.Println("Error executing query:", err)
+			resultText := fmt.Sprintf(err.Error())
+			inputEntry.SetText(resultText)
 			return
 		}
 
@@ -172,27 +187,36 @@ func Create() {
 		filenameEntry := widget.NewEntry()
 		filenameEntry.SetPlaceHolder("Enter filename (without .csv)")
 
-		form := &widget.Form{
-			OnSubmit: func() {
-				filename := filenameEntry.Text + ".csv"
-				content := inputEntry.Text
+		submitBtn := widget.NewButton("Save", func() {
+			filename := filenameEntry.Text + ".csv"
+			content := inputEntry.Text
 
-				err := saveCSV(filename, content)
-				if err != nil {
-					log.Println("Error saving CSV:", err)
-					inputEntry.SetText("Error saving CSV")
-					return
-				}
+			err := saveCSV(filename, content)
+			if err != nil {
+				log.Println("Error saving CSV:", err)
+				inputEntry.SetText("Error saving CSV")
+				return
+			}
 
-				dialog.NewInformation("CSV Saved", fmt.Sprintf("Content has been saved to %s", filename), myWindow).Show()
-			},
-			OnCancel: func() {},
-			Items: []*widget.FormItem{
-				{Text: "Filename", Widget: filenameEntry},
-			},
-		}
+			infoDialog := dialog.NewInformation("CSV Saved", fmt.Sprintf("Content has been saved to %s", filename), myWindow)
+			infoDialog.Show()
+		})
 
-		dialog.ShowCustom("Save CSV", "Save", form, myWindow)
+		formContainer := container.NewWithoutLayout(
+			widget.NewLabel("Filename:"),
+			filenameEntry,
+			submitBtn,
+		)
+
+		saveDialog := dialog.NewCustom("Save CSV", "Exit", formContainer, myWindow)
+		filenameEntry.Move(fyne.NewPos(100, 0))
+		submitBtn.Move(fyne.NewPos(240, 85))
+
+		filenameEntry.Resize(fyne.NewSize(230, 40))
+		submitBtn.Resize(fyne.NewSize(50, 40))
+		saveDialog.Resize(fyne.NewSize(400, 200))
+
+		saveDialog.Show()
 	})
 
 	exitBtn := widget.NewButton("Exit", func() {
