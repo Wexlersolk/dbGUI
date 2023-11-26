@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"os"
 	"strings"
+
+	"github.com/Wexler763/dbGUI/oo"
 )
 
 func getTables(db *sql.DB) ([]string, error) {
@@ -117,7 +119,7 @@ func saveCSV(filename string, data string) error {
 	return nil
 }
 
-func executeCommandOO(db *sql.DB, command string, book struct) (string, error) {
+func executeCommandOO(db *sql.DB, command string, book oo.Book) (string, error) {
 	var result string
 	switch command {
 	case "create":

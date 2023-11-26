@@ -1,12 +1,24 @@
+package fyneapp
 
 import (
 	"database/sql"
 	"fmt"
+	"strconv"
 	"strings"
 
 	"fyne.io/fyne/v2/widget"
 	"github.com/Wexler763/dbGUI/oo"
 )
+
+func atoi(s string) int {
+	i, _ := strconv.Atoi(s)
+	return i
+}
+
+func atof(s string) float64 {
+	f, _ := strconv.ParseFloat(s, 64)
+	return f
+}
 
 func handleRunQuery(db *sql.DB, query string, isEditingMode bool, inputEntry *widget.Entry) {
 	if isEditingMode {
