@@ -47,6 +47,11 @@ func handleEditingMode(db *sql.DB, inputEntry *widget.Entry) {
 		action := strings.TrimSpace(strings.TrimPrefix(instructionLine, prefix))
 		values := parseBookValues(lines)
 
+		fmt.Println("Parsed Values:")
+		for key, value := range values {
+			fmt.Printf("%s: %s\n", key, value)
+		}
+
 		book := oo.Book{
 			BookLibraryCode:   values["BookLibraryCode"],
 			Title:             values["Title"],
@@ -72,15 +77,13 @@ func handleEditingMode(db *sql.DB, inputEntry *widget.Entry) {
 func parseBookValues(lines []string) map[string]string {
 	values := make(map[string]string)
 
-	for i := 1; i < len(lines)-1; i++ {
+	for i := 1; i < len(lines); i++ {
 		line := strings.TrimSpace(lines[i])
 		if line != "" {
 			parts := strings.Split(line, "\t")
-			if len(parts) == 2 {
-				name := strings.TrimSpace(parts[0])
-				value := strings.TrimSpace(parts[1])
-				values[name] = value
-			}
+			name := strings.TrimSpace(parts[0])
+			value := strings.TrimSpace(parts[1])
+			values[name] = value
 		}
 	}
 

@@ -123,7 +123,11 @@ func executeCommandOO(db *sql.DB, command string, book oo.Book) (string, error) 
 	var result string
 	switch command {
 	case "create":
-		result = "cr result"
+		err := oo.NewBookCatalogDAOMySQL(db).AddBook(book)
+		if err != nil {
+			return "", err
+		}
+		result = "Book added successfully"
 
 	case "read":
 		result = "read res"

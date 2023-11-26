@@ -35,7 +35,19 @@ func NewBookCatalogDAOMySQL(db *sql.DB) *ooDB {
 }
 
 func (db *ooDB) AddBook(book Book) error {
-	// Implement the logic to add a book to the database
+	// Prepare the SQL statement
+	stmt, err := db.DB.Prepare("INSERT INTO bookcatalog (book_library_code, title, year_of_publication, number_of_pages, price, genre_id, author_id, publisher_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)")
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
+
+	// Execute the SQL statement with the provided book values
+	_, err = stmt.Exec(book.BookLibraryCode, book.Title, book.YearOfPublication, book.NumberOfPages, book.Price, book.GenreID, book.AuthorID, book.PublisherID)
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 
