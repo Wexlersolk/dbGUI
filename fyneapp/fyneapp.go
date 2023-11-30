@@ -106,8 +106,8 @@ func Create() {
 	)
 	tablePlus.SetColumnWidth(0, 150)
 	tablePlus.SetColumnWidth(1, 150)
-
 	tablePlus.Hide()
+
 	runQueryBtn := widget.NewButton("▶️ Run Query", func() {
 		db, err := dbconnect.ConnectDB()
 		if err != nil {
@@ -116,11 +116,11 @@ func Create() {
 		}
 
 		query := inputEntry.Text
-		if query == "" {
+		if query == "" && !isEditingMode {
 			return
 		}
 
-		handleRunQuery(db, query, isEditingMode, inputEntry)
+		handleRunQuery(db, query, isEditingMode, inputEntry, tablePlus)
 	})
 
 	showTablesBtn := widget.NewButton("Show Tables", func() {
