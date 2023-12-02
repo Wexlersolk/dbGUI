@@ -161,6 +161,16 @@ func Create() {
 		tablePlus.Refresh()
 	})
 
+	deleteBook := widget.NewButton("Delete", func() {
+		db, err := dbconnect.ConnectDB()
+		if err != nil {
+			log.Println("Failed to connect to the database:", err)
+			return
+		}
+
+		NewBookCatalogDAOMySQL(db).DeleteBook(data.BookLibraryCode)
+	})
+
 	showTablesBtn := widget.NewButton("Show Tables", func() {
 		db, err := dbconnect.ConnectDB()
 		if err != nil {
@@ -223,12 +233,14 @@ func Create() {
 			showbylbcode.Show()
 			addBook.Show()
 			inputEntry.Hide()
+			deleteBook.Show()
+
 		} else {
 			showbylbcode.Hide()
 			addBook.Hide()
 			tablePlus.Hide()
 			inputEntry.Show()
-
+			deleteBook.Hide()
 		}
 	})
 
@@ -244,8 +256,9 @@ func Create() {
 	saveCSVBtn.Move(fyne.NewPos(1000, 300))
 	switchBtn.Move(fyne.NewPos(600, 600))
 	tablePlus.Move(fyne.NewPos(10, 70))
-	addBook.Move(fyne.NewPos(600, 100))
-	showbylbcode.Move(fyne.NewPos(600, 300))
+	addBook.Move(fyne.NewPos(600, 50))
+	showbylbcode.Move(fyne.NewPos(600, 200))
+	deleteBook.Move(fyne.NewPos(600, 350))
 
 	switchBtn.Resize(fyne.NewSize(130, 60))
 	inputEntry.Resize(fyne.NewSize(800, 500))
@@ -256,6 +269,7 @@ func Create() {
 	tablePlus.Resize(fyne.NewSize(320, 320))
 	addBook.Resize(fyne.NewSize(130, 60))
 	showbylbcode.Resize(fyne.NewSize(130, 60))
+	deleteBook.Resize(fyne.NewSize(130, 60))
 
 	myWindow.SetContent(
 		container.NewWithoutLayout(
@@ -269,12 +283,14 @@ func Create() {
 			tablePlus,
 			addBook,
 			showbylbcode,
+			deleteBook,
 		),
 	)
 
 	showbylbcode.Hide()
 	addBook.Hide()
 	tablePlus.Hide()
+	deleteBook.Hide()
 
 	myWindow.Canvas().SetOnTypedKey(func(keyEvent *fyne.KeyEvent) {
 		if keyEvent.Name == fyne.KeyEscape {

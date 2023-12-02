@@ -99,8 +99,12 @@ func (dao *ooDB) UpdateBook(book TableData) error {
 	return nil
 }
 
-func (dao *ooDB) DeleteBook(book TableData) error {
-	// Implement the logic to delete a book from the database
+func (dao *ooDB) DeleteBook(libraryCode string) error {
+	_, err := dao.DB.Exec("DELETE FROM bookcatalog WHERE book_library_code=?", libraryCode)
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 
