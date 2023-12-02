@@ -27,42 +27,42 @@ func Create() {
 	inputEntry.SetPlaceHolder("Enter your query here")
 	inputEntry.MultiLine = true
 
-	//  the table
 	tablePlus := widget.NewTable(
-		func() (int, int) { return 8, 2 }, // 8 rows, 2 columns
+		func() (int, int) { return 8, 2 },
 		func() fyne.CanvasObject { return widget.NewEntry() },
 		func(i widget.TableCellID, obj fyne.CanvasObject) {
-			// Populate the table with data
 			switch i.Row {
 			case 0:
 				switch i.Col {
 				case 0:
 					obj.(*widget.Entry).SetText("Title")
 				case 1:
-					entry := widget.NewEntry()
-					entry.SetText(data.Title)
-					entry.OnChanged = func(text string) {
+					obj.(*widget.Entry).SetText(data.Title)
+					obj.(*widget.Entry).OnChanged = func(text string) {
 						data.Title = text
 					}
-					obj = entry
+
 				}
 			case 1:
 				switch i.Col {
 				case 0:
 					obj.(*widget.Entry).SetText("Year of Publication")
 				case 1:
-					obj = widget.NewEntry()
 					obj.(*widget.Entry).SetText(data.YearOfPublication)
 					obj.(*widget.Entry).OnChanged = func(text string) {
 						data.YearOfPublication = text
 					}
 				}
+
 			case 2:
 				switch i.Col {
 				case 0:
 					obj.(*widget.Entry).SetText("Number of Pages")
 				case 1:
 					obj.(*widget.Entry).SetText(data.NumberOfPages)
+					obj.(*widget.Entry).OnChanged = func(text string) {
+						data.NumberOfPages = text
+					}
 				}
 			case 3:
 				switch i.Col {
@@ -70,6 +70,9 @@ func Create() {
 					obj.(*widget.Entry).SetText("Price")
 				case 1:
 					obj.(*widget.Entry).SetText(data.Price)
+					obj.(*widget.Entry).OnChanged = func(text string) {
+						data.Price = text
+					}
 				}
 			case 4:
 				switch i.Col {
@@ -77,6 +80,9 @@ func Create() {
 					obj.(*widget.Entry).SetText("Genre ID")
 				case 1:
 					obj.(*widget.Entry).SetText(data.GenreID)
+					obj.(*widget.Entry).OnChanged = func(text string) {
+						data.GenreID = text
+					}
 				}
 			case 5:
 				switch i.Col {
@@ -84,6 +90,9 @@ func Create() {
 					obj.(*widget.Entry).SetText("Author ID")
 				case 1:
 					obj.(*widget.Entry).SetText(data.AuthorID)
+					obj.(*widget.Entry).OnChanged = func(text string) {
+						data.AuthorID = text
+					}
 				}
 			case 6:
 				switch i.Col {
@@ -91,6 +100,9 @@ func Create() {
 					obj.(*widget.Entry).SetText("Publisher ID")
 				case 1:
 					obj.(*widget.Entry).SetText(data.PublisherID)
+					obj.(*widget.Entry).OnChanged = func(text string) {
+						data.PublisherID = text
+					}
 				}
 			case 7:
 				switch i.Col {
@@ -98,6 +110,9 @@ func Create() {
 					obj.(*widget.Entry).SetText("Book Library Code")
 				case 1:
 					obj.(*widget.Entry).SetText(data.BookLibraryCode)
+					obj.(*widget.Entry).OnChanged = func(text string) {
+						data.BookLibraryCode = text
+					}
 				}
 			default:
 				obj.(*widget.Entry).SetText(fmt.Sprintf("%d %d", i.Col, i.Row))
