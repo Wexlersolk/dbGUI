@@ -12,6 +12,8 @@ import (
 	"github.com/Wexler763/dbGUI/dbconnect"
 )
 
+var titleentry widget.Entry
+
 func Create() {
 
 	myApp := app.New()
@@ -119,9 +121,9 @@ func Create() {
 			}
 		},
 	)
+
 	tablePlus.SetColumnWidth(0, 150)
 	tablePlus.SetColumnWidth(1, 150)
-	tablePlus.Hide()
 
 	runQueryBtn := widget.NewButton("▶️ Run Query", func() {
 		db, err := dbconnect.ConnectDB()
@@ -135,7 +137,28 @@ func Create() {
 			return
 		}
 
-		handleRunQuery(db, query, isEditingMode, inputEntry, tablePlus)
+		handleRunQuery(db, query, isEditingMode, inputEntry)
+	})
+
+	addBook := widget.NewButton("Add Book", func() {
+		db, err := dbconnect.ConnectDB()
+		if err != nil {
+			log.Println("Failed to connect to the database:", err)
+			return
+		}
+
+		NewBookCatalogDAOMySQL(db).AddBook(data)
+	})
+
+	showbylbcode := widget.NewButton("Show By LC", func() {
+		db, err := dbconnect.ConnectDB()
+		if err != nil {
+			log.Println("Failed to connect to the database:", err)
+			return
+		}
+
+		NewBookCatalogDAOMySQL(db).FindByLibraryCode(data.BookLibraryCode)
+		tablePlus.Refresh()
 	})
 
 	showTablesBtn := widget.NewButton("Show Tables", func() {
@@ -197,8 +220,15 @@ func Create() {
 		isEditingMode = !isEditingMode
 		if isEditingMode {
 			tablePlus.Show()
+			showbylbcode.Show()
+			addBook.Show()
+			inputEntry.Hide()
 		} else {
+			showbylbcode.Hide()
+			addBook.Hide()
 			tablePlus.Hide()
+			inputEntry.Show()
+
 		}
 	})
 
@@ -213,7 +243,9 @@ func Create() {
 	exitBtn.Move(fyne.NewPos(1000, 500))
 	saveCSVBtn.Move(fyne.NewPos(1000, 300))
 	switchBtn.Move(fyne.NewPos(600, 600))
-	tablePlus.Move(fyne.NewPos(30, 100))
+	tablePlus.Move(fyne.NewPos(10, 70))
+	addBook.Move(fyne.NewPos(600, 100))
+	showbylbcode.Move(fyne.NewPos(600, 300))
 
 	switchBtn.Resize(fyne.NewSize(130, 60))
 	inputEntry.Resize(fyne.NewSize(800, 500))
@@ -222,6 +254,8 @@ func Create() {
 	exitBtn.Resize(fyne.NewSize(130, 60))
 	saveCSVBtn.Resize(fyne.NewSize(130, 60))
 	tablePlus.Resize(fyne.NewSize(320, 320))
+	addBook.Resize(fyne.NewSize(130, 60))
+	showbylbcode.Resize(fyne.NewSize(130, 60))
 
 	myWindow.SetContent(
 		container.NewWithoutLayout(
@@ -233,8 +267,14 @@ func Create() {
 			exitBtn,
 			switchBtn,
 			tablePlus,
+			addBook,
+			showbylbcode,
 		),
 	)
+
+	showbylbcode.Hide()
+	addBook.Hide()
+	tablePlus.Hide()
 
 	myWindow.Canvas().SetOnTypedKey(func(keyEvent *fyne.KeyEvent) {
 		if keyEvent.Name == fyne.KeyEscape {

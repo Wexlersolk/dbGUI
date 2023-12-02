@@ -23,9 +23,7 @@ func atof(s string) float64 {
 	return f
 }
 
-func handleEditingMode(db *sql.DB, inputEntry *widget.Entry, tablePlus *widget.Table) {
-	readDataFromTable()
-	fmt.Println("Data from the second column:")
+func handleEditingMode() {
 
 	fmt.Println("Title:", data.Title)
 	fmt.Println("Year of Publication:", data.YearOfPublication)
@@ -37,13 +35,10 @@ func handleEditingMode(db *sql.DB, inputEntry *widget.Entry, tablePlus *widget.T
 	fmt.Println("Book Library Code:", data.BookLibraryCode)
 
 }
-func readDataFromTable() {
 
-}
-
-func handleRunQuery(db *sql.DB, query string, isEditingMode bool, inputEntry *widget.Entry, tablePlus *widget.Table) {
+func handleRunQuery(db *sql.DB, query string, isEditingMode bool, inputEntry *widget.Entry) {
 	if isEditingMode {
-		handleEditingMode(db, inputEntry, tablePlus)
+		handleEditingMode()
 		return
 	}
 
@@ -56,4 +51,8 @@ func handleRunQuery(db *sql.DB, query string, isEditingMode bool, inputEntry *wi
 
 	resultText := fmt.Sprintf(result)
 	inputEntry.SetText(resultText)
+}
+
+func setTable(tablePlus *widget.Table, data *TableData) {
+
 }

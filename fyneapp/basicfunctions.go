@@ -6,8 +6,6 @@ import (
 	"fmt"
 	"os"
 	"strings"
-
-	"github.com/Wexler763/dbGUI/oo"
 )
 
 func getTables(db *sql.DB) ([]string, error) {
@@ -117,27 +115,4 @@ func saveCSV(filename string, data string) error {
 	}
 
 	return nil
-}
-
-func executeCommandOO(db *sql.DB, command string, book oo.Book) (string, error) {
-	var result string
-	switch command {
-	case "create":
-		err := oo.NewBookCatalogDAOMySQL(db).AddBook(book)
-		if err != nil {
-			return "", err
-		}
-		result = "Book added successfully"
-
-	case "read":
-		result = "read res"
-
-	case "update":
-		result = "upd res"
-
-	case "delete":
-		result = "del res"
-
-	}
-	return result, nil
 }
